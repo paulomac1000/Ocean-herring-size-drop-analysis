@@ -1,5 +1,5 @@
 ---
-title: "Ocean hearing size drop analysis"
+title: "Analiza spadku wielkości śledzia oceanicznego"
 author: "Paweł Maciejewski"
 date: "23 01 2020"
 output:
@@ -12,15 +12,15 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Description of problem
+## Opis problemu
 
-Over the past years, there has been a gradual decrease in the size of ocean herring caught in Europe. Measurements of herring and their living conditions from the last 60 years were collected for the analysis. Data were obtained from commercial catches of vessels. Within the catch of one unit, 50 to 100 herrings of three-year-old herring were randomly selected.
+Na przestrzeni ostatnich lat zauważono stopniowy spadek rozmiaru śledzia oceanicznego wyławianego w Europie. Do analizy zebrano pomiary śledzi i warunków w jakich żyją z ostatnich 60 lat. Dane były pobierane z połowów komercyjnych jednostek. W ramach połowu jednej jednostki losowo wybierano od 50 do 100 sztuk trzyletnich śledzi.
 
-## Conclusion
+## Wnioski
 
 TODO
 
-## Reference libraries
+## Biblioteki
 
 ```{r libraries, message=FALSE}
 
@@ -31,9 +31,9 @@ library(tidyverse)
 
 ```
 
-## Load and present data
+## Ładowanie i prezentacja danych
 
-The data in the form of a csv file was loaded directly from the task description page
+Dane zostana załadowane bezpośrednio z pliku csv pochodzącego ze strony z zadaniem.
 
 ```{r load, cache=TRUE}
 
@@ -57,39 +57,39 @@ noBlankRowsCount <- nrow(na.omit(data))
 
 ```
 
-The set contains `r colCount` columns and `r rowCount` rows. Number of rows with no blank is `r noBlankRowsCount`. The columns have the following names: `r colNamesConcatenated`. First 10 rows of data:
+Zbiór zawiera `r colCount` kolumn i `r rowCount` wierszy. Liczba wierszy bez wartości pustych wynosi `r noBlankRowsCount`. Kolumny mają następujące nazwy: `r colNamesConcatenated`. Prezentacja pierwszych 10 wierszy:
 
 ```{r kable}
 
-knitr::kable(head(data, 10))
+kable(head(data, 10))
 
 ```
 
-Column description according to the content of the task:
+Opis kolumn:
 
-Name| Description
+Nazwa | Opis
 ---------|--------------------------------------------
-length: | length of herring caught [cm]
-cfin1:  | plankton availability [density Calanus finmarchicus type 1]
-cfin2:  | plankton availability [density Calanus finmarchicus type 2]
-chel1:  | plankton availability [density Calanus helgolandicus type 1]
-chel2:  | plankton availability [density Calanus helgolandicus type 2]
-lcop1:  | plankton availability [forkhead density type 1]
-lcop2:  | plankton availability [forkhead density type 2]
-fbar:   | fishing volume in the region [fraction of fry left]
-recr:   | annual fry [number of herrings]
-cumf:   | total annual fishing intensity in the region [fraction of fry left]
-totaln: | total number of fish caught in the fishery [number of herrings]
-sst:    | temperature at the water surface  [°C]
-sal:    | water salinity [Knudsen ppt]
-xmonth: | fishing month [month number]
-nao:    | North Atlantic Oscillation [mb]
+length: | długość złowionego śledzia [cm]
+cfin1:  | dostępność planktonu [zagęszczenie Calanus finmarchicus gat. 1]
+cfin2:  | dostępność planktonu [zagęszczenie Calanus finmarchicus gat. 2]
+chel1:  | dostępność planktonu [zagęszczenie Calanus helgolandicus gat. 1]
+chel2:  | dostępność planktonu [zagęszczenie Calanus helgolandicus gat. 2]
+lcop1:  | dostępność planktonu [zagęszczenie widłonogów gat. 1]
+lcop2:  | dostępność planktonu [zagęszczenie widłonogów gat. 2]
+fbar:   | natężenie połowów w regionie [ułamek pozostawionego narybku]
+recr:   | roczny narybek [liczba śledzi]
+cumf:   | łączne roczne natężenie połowów w regionie [ułamek pozostawionego narybku]
+totaln: | łączna liczba ryb złowionych w ramach połowu [liczba śledzi]
+sst:    | temperatura przy powierzchni wody [°C]
+sal:    | poziom zasolenia wody [Knudsen ppt]
+xmonth: | miesiąc połowu [numer miesiąca]
+nao:    | oscylacja północnoatlantycka [mb]
 
-The rows in the set are ordered chronologically.
+Wiersze w zbiorze są uporządkowane chronologicznie.
 
-## Data description
+## Opis danych
 
-In the previous step, the following column types were calculated:
+Prezentacja typów kolumn:
 
 ```{r description}
 
@@ -97,9 +97,7 @@ glimpse(data)
 
 ```
 
-## Summary
-
-Summaries of the model
+## Podsumowanie rozkładów
 
 ```{r summary}
 

@@ -1516,32 +1516,32 @@ div.tocify {
 </div>
 
 
-<div id="description-of-problem" class="section level2">
-<h2>Description of problem</h2>
-<p>Over the past years, there has been a gradual decrease in the size of ocean herring caught in Europe. Measurements of herring and their living conditions from the last 60 years were collected for the analysis. Data were obtained from commercial catches of vessels. Within the catch of one unit, 50 to 100 herrings of three-year-old herring were randomly selected.</p>
+<div id="opis-problemu" class="section level2">
+<h2>Opis problemu</h2>
+<p>Na przestrzeni ostatnich lat zauważono stopniowy spadek rozmiaru śledzia oceanicznego wyławianego w Europie. Do analizy zebrano pomiary śledzi i warunków w jakich żyją z ostatnich 60 lat. Dane były pobierane z połowów komercyjnych jednostek. W ramach połowu jednej jednostki losowo wybierano od 50 do 100 sztuk trzyletnich śledzi.</p>
 </div>
-<div id="conclusion" class="section level2">
-<h2>Conclusion</h2>
+<div id="wnioski" class="section level2">
+<h2>Wnioski</h2>
 <p>TODO</p>
 </div>
-<div id="reference-libraries" class="section level2">
-<h2>Reference libraries</h2>
+<div id="biblioteki" class="section level2">
+<h2>Biblioteki</h2>
 <pre class="r"><code>library(dplyr)
 library(knitr)
 library(pander)
 library(tidyverse)</code></pre>
 </div>
-<div id="load-and-present-data" class="section level2">
-<h2>Load and present data</h2>
-<p>The data in the form of a csv file was loaded directly from the task description page</p>
+<div id="ładowanie-i-prezentacja-danych" class="section level2">
+<h2>Ładowanie i prezentacja danych</h2>
+<p>Dane zostana załadowane bezpośrednio z pliku csv pochodzącego ze strony z zadaniem.</p>
 <pre class="r"><code>download.file(
   &quot;http://www.cs.put.poznan.pl/dbrzezinski/teaching/sphd/sledzie.csv&quot;,
   destfile = &#39;sledzie.csv&#39;
 )
 
 data &lt;- read.csv(&quot;sledzie.csv&quot;, header = TRUE, sep = &quot;,&quot;, na.strings = &quot;?&quot;) %&gt;% rename(id = X)</code></pre>
-<p>The set contains 16 columns and 52582 rows. Number of rows with no blank is 42488. The columns have the following names: id, length, cfin1, cfin2, chel1, chel2, lcop1, lcop2, fbar, recr, cumf, totaln, sst, sal, xmonth, nao. First 10 rows of data:</p>
-<pre class="r"><code>knitr::kable(head(data, 10))</code></pre>
+<p>Zbiór zawiera 16 kolumn i 52582 wierszy. Liczba wierszy bez wartości pustych wynosi 42488. Kolumny mają następujące nazwy: id, length, cfin1, cfin2, chel1, chel2, lcop1, lcop2, fbar, recr, cumf, totaln, sst, sal, xmonth, nao. Prezentacja pierwszych 10 wierszy:</p>
+<pre class="r"><code>kable(head(data, 10))</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -1746,82 +1746,86 @@ data &lt;- read.csv(&quot;sledzie.csv&quot;, header = TRUE, sep = &quot;,&quot;,
 </tr>
 </tbody>
 </table>
-<p>Column description according to the content of the task:</p>
+<p>Opis kolumn:</p>
 <table>
+<colgroup>
+<col width="16%"></col>
+<col width="83%"></col>
+</colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
-<th>Description</th>
+<th>Nazwa</th>
+<th>Opis</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>length:</td>
-<td>length of herring caught [cm]</td>
+<td>długość złowionego śledzia [cm]</td>
 </tr>
 <tr class="even">
 <td>cfin1:</td>
-<td>plankton availability [density Calanus finmarchicus type 1]</td>
+<td>dostępność planktonu [zagęszczenie Calanus finmarchicus gat. 1]</td>
 </tr>
 <tr class="odd">
 <td>cfin2:</td>
-<td>plankton availability [density Calanus finmarchicus type 2]</td>
+<td>dostępność planktonu [zagęszczenie Calanus finmarchicus gat. 2]</td>
 </tr>
 <tr class="even">
 <td>chel1:</td>
-<td>plankton availability [density Calanus helgolandicus type 1]</td>
+<td>dostępność planktonu [zagęszczenie Calanus helgolandicus gat. 1]</td>
 </tr>
 <tr class="odd">
 <td>chel2:</td>
-<td>plankton availability [density Calanus helgolandicus type 2]</td>
+<td>dostępność planktonu [zagęszczenie Calanus helgolandicus gat. 2]</td>
 </tr>
 <tr class="even">
 <td>lcop1:</td>
-<td>plankton availability [forkhead density type 1]</td>
+<td>dostępność planktonu [zagęszczenie widłonogów gat. 1]</td>
 </tr>
 <tr class="odd">
 <td>lcop2:</td>
-<td>plankton availability [forkhead density type 2]</td>
+<td>dostępność planktonu [zagęszczenie widłonogów gat. 2]</td>
 </tr>
 <tr class="even">
 <td>fbar:</td>
-<td>fishing volume in the region [fraction of fry left]</td>
+<td>natężenie połowów w regionie [ułamek pozostawionego narybku]</td>
 </tr>
 <tr class="odd">
 <td>recr:</td>
-<td>annual fry [number of herrings]</td>
+<td>roczny narybek [liczba śledzi]</td>
 </tr>
 <tr class="even">
 <td>cumf:</td>
-<td>total annual fishing intensity in the region [fraction of fry left]</td>
+<td>łączne roczne natężenie połowów w regionie [ułamek pozostawionego narybku]</td>
 </tr>
 <tr class="odd">
 <td>totaln:</td>
-<td>total number of fish caught in the fishery [number of herrings]</td>
+<td>łączna liczba ryb złowionych w ramach połowu [liczba śledzi]</td>
 </tr>
 <tr class="even">
 <td>sst:</td>
-<td>temperature at the water surface [°C]</td>
+<td>temperatura przy powierzchni wody [°C]</td>
 </tr>
 <tr class="odd">
 <td>sal:</td>
-<td>water salinity [Knudsen ppt]</td>
+<td>poziom zasolenia wody [Knudsen ppt]</td>
 </tr>
 <tr class="even">
 <td>xmonth:</td>
-<td>fishing month [month number]</td>
+<td>miesiąc połowu [numer miesiąca]</td>
 </tr>
 <tr class="odd">
 <td>nao:</td>
-<td>North Atlantic Oscillation [mb]</td>
+<td>oscylacja północnoatlantycka [mb]</td>
 </tr>
 </tbody>
 </table>
-<p>The rows in the set are ordered chronologically.</p>
+<p>Wiersze w zbiorze są uporządkowane chronologicznie.</p>
 </div>
-<div id="data-description" class="section level2">
-<h2>Data description</h2>
-<p>In the previous step, the following column types were calculated:</p>
+<div id="opis-danych" class="section level2">
+<h2>Opis danych</h2>
+<p>Prezentacja typów kolumn:</p>
 <pre class="r"><code>glimpse(data)</code></pre>
 <pre><code>## Observations: 52,582
 ## Variables: 16
@@ -1842,9 +1846,8 @@ data &lt;- read.csv(&quot;sledzie.csv&quot;, header = TRUE, sep = &quot;,&quot;,
 ## $ xmonth &lt;int&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, ...
 ## $ nao    &lt;dbl&gt; 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, ...</code></pre>
 </div>
-<div id="summary" class="section level2">
-<h2>Summary</h2>
-<p>Summaries of the model</p>
+<div id="podsumowanie-rozkładów" class="section level2">
+<h2>Podsumowanie rozkładów</h2>
 <pre class="r"><code>pander(summary(data))</code></pre>
 <table style="width:93%;">
 <caption>Table continues below</caption>

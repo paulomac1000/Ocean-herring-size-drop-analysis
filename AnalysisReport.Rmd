@@ -1,0 +1,32 @@
+---
+title: "Ocean hearing size drop analysis"
+author: "Paweł Maciejewski"
+date: "23 01 2020"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Summary of genesis data setsta 
+
+Over the past years, there has been a gradual decrease in the size of ocean herring caught in Europe. Measurements of herring and their living conditions from the last 60 years were collected for the analysis. Data were obtained from commercial catches of vessels. Within the catch of one unit, 50 to 100 herrings of three-year-old herring were randomly selected.
+
+```{r hearings}
+data <- read.csv("http://www.cs.put.poznan.pl/dbrzezinski/teaching/sphd/sledzie.csv")
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

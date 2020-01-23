@@ -1516,16 +1516,579 @@ div.tocify {
 </div>
 
 
-<div id="summary-of-genesis-data-setsta" class="section level2">
-<h2>Summary of genesis data setsta</h2>
+<div id="description-of-problem" class="section level2">
+<h2>Description of problem</h2>
 <p>Over the past years, there has been a gradual decrease in the size of ocean herring caught in Europe. Measurements of herring and their living conditions from the last 60 years were collected for the analysis. Data were obtained from commercial catches of vessels. Within the catch of one unit, 50 to 100 herrings of three-year-old herring were randomly selected.</p>
-<pre class="r"><code>data &lt;- read.csv(&quot;http://www.cs.put.poznan.pl/dbrzezinski/teaching/sphd/sledzie.csv&quot;)</code></pre>
 </div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="data:image/png;base64,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" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>TODO</p>
+</div>
+<div id="reference-libraries" class="section level2">
+<h2>Reference libraries</h2>
+<pre class="r"><code>library(dplyr)
+library(knitr)
+library(pander)
+library(tidyverse)</code></pre>
+</div>
+<div id="load-and-present-data" class="section level2">
+<h2>Load and present data</h2>
+<p>The data in the form of a csv file was loaded directly from the task description page</p>
+<pre class="r"><code>download.file(
+  &quot;http://www.cs.put.poznan.pl/dbrzezinski/teaching/sphd/sledzie.csv&quot;,
+  destfile = &#39;sledzie.csv&#39;
+)
+
+data &lt;- read.csv(&quot;sledzie.csv&quot;, header = TRUE, sep = &quot;,&quot;, na.strings = &quot;?&quot;) %&gt;% rename(id = X)</code></pre>
+<p>The set contains 16 columns and 52582 rows. Number of rows with no blank is 42488. The columns have the following names: id, length, cfin1, cfin2, chel1, chel2, lcop1, lcop2, fbar, recr, cumf, totaln, sst, sal, xmonth, nao. First 10 rows of data:</p>
+<pre class="r"><code>knitr::kable(head(data, 10))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="right">length</th>
+<th align="right">cfin1</th>
+<th align="right">cfin2</th>
+<th align="right">chel1</th>
+<th align="right">chel2</th>
+<th align="right">lcop1</th>
+<th align="right">lcop2</th>
+<th align="right">fbar</th>
+<th align="right">recr</th>
+<th align="right">cumf</th>
+<th align="right">totaln</th>
+<th align="right">sst</th>
+<th align="right">sal</th>
+<th align="right">xmonth</th>
+<th align="right">nao</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">23.0</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">NA</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">22.5</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">25.0</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">25.5</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">24.0</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">22.0</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">NA</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="odd">
+<td align="right">6</td>
+<td align="right">24.0</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="right">23.5</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="right">22.5</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="right">22.5</td>
+<td align="right">0.02778</td>
+<td align="right">0.27785</td>
+<td align="right">2.46875</td>
+<td align="right">21.43548</td>
+<td align="right">2.54787</td>
+<td align="right">26.35881</td>
+<td align="right">0.356</td>
+<td align="right">482831</td>
+<td align="right">0.3059879</td>
+<td align="right">267380.8</td>
+<td align="right">14.30693</td>
+<td align="right">35.51234</td>
+<td align="right">7</td>
+<td align="right">2.8</td>
+</tr>
+</tbody>
+</table>
+<p>Column description according to the content of the task:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>length:</td>
+<td>length of herring caught [cm]</td>
+</tr>
+<tr class="even">
+<td>cfin1:</td>
+<td>plankton availability [density Calanus finmarchicus type 1]</td>
+</tr>
+<tr class="odd">
+<td>cfin2:</td>
+<td>plankton availability [density Calanus finmarchicus type 2]</td>
+</tr>
+<tr class="even">
+<td>chel1:</td>
+<td>plankton availability [density Calanus helgolandicus type 1]</td>
+</tr>
+<tr class="odd">
+<td>chel2:</td>
+<td>plankton availability [density Calanus helgolandicus type 2]</td>
+</tr>
+<tr class="even">
+<td>lcop1:</td>
+<td>plankton availability [forkhead density type 1]</td>
+</tr>
+<tr class="odd">
+<td>lcop2:</td>
+<td>plankton availability [forkhead density type 2]</td>
+</tr>
+<tr class="even">
+<td>fbar:</td>
+<td>fishing volume in the region [fraction of fry left]</td>
+</tr>
+<tr class="odd">
+<td>recr:</td>
+<td>annual fry [number of herrings]</td>
+</tr>
+<tr class="even">
+<td>cumf:</td>
+<td>total annual fishing intensity in the region [fraction of fry left]</td>
+</tr>
+<tr class="odd">
+<td>totaln:</td>
+<td>total number of fish caught in the fishery [number of herrings]</td>
+</tr>
+<tr class="even">
+<td>sst:</td>
+<td>temperature at the water surface [°C]</td>
+</tr>
+<tr class="odd">
+<td>sal:</td>
+<td>water salinity [Knudsen ppt]</td>
+</tr>
+<tr class="even">
+<td>xmonth:</td>
+<td>fishing month [month number]</td>
+</tr>
+<tr class="odd">
+<td>nao:</td>
+<td>North Atlantic Oscillation [mb]</td>
+</tr>
+</tbody>
+</table>
+<p>The rows in the set are ordered chronologically.</p>
+</div>
+<div id="data-description" class="section level2">
+<h2>Data description</h2>
+<p>In the previous step, the following column types were calculated:</p>
+<pre class="r"><code>glimpse(data)</code></pre>
+<pre><code>## Observations: 52,582
+## Variables: 16
+## $ id     &lt;int&gt; 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17...
+## $ length &lt;dbl&gt; 23.0, 22.5, 25.0, 25.5, 24.0, 22.0, 24.0, 23.5, 22.5, 22.5, ...
+## $ cfin1  &lt;dbl&gt; 0.02778, 0.02778, 0.02778, 0.02778, 0.02778, 0.02778, 0.0277...
+## $ cfin2  &lt;dbl&gt; 0.27785, 0.27785, 0.27785, 0.27785, 0.27785, 0.27785, 0.2778...
+## $ chel1  &lt;dbl&gt; 2.46875, 2.46875, 2.46875, 2.46875, 2.46875, 2.46875, 2.4687...
+## $ chel2  &lt;dbl&gt; NA, 21.43548, 21.43548, 21.43548, 21.43548, 21.43548, 21.435...
+## $ lcop1  &lt;dbl&gt; 2.54787, 2.54787, 2.54787, 2.54787, 2.54787, 2.54787, 2.5478...
+## $ lcop2  &lt;dbl&gt; 26.35881, 26.35881, 26.35881, 26.35881, 26.35881, NA, 26.358...
+## $ fbar   &lt;dbl&gt; 0.356, 0.356, 0.356, 0.356, 0.356, 0.356, 0.356, 0.356, 0.35...
+## $ recr   &lt;int&gt; 482831, 482831, 482831, 482831, 482831, 482831, 482831, 4828...
+## $ cumf   &lt;dbl&gt; 0.3059879, 0.3059879, 0.3059879, 0.3059879, 0.3059879, 0.305...
+## $ totaln &lt;dbl&gt; 267380.8, 267380.8, 267380.8, 267380.8, 267380.8, 267380.8, ...
+## $ sst    &lt;dbl&gt; 14.30693, 14.30693, 14.30693, 14.30693, 14.30693, 14.30693, ...
+## $ sal    &lt;dbl&gt; 35.51234, 35.51234, 35.51234, 35.51234, 35.51234, 35.51234, ...
+## $ xmonth &lt;int&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, ...
+## $ nao    &lt;dbl&gt; 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, 2.8, ...</code></pre>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>Summaries of the model</p>
+<pre class="r"><code>pander(summary(data))</code></pre>
+<table style="width:93%;">
+<caption>Table continues below</caption>
+<colgroup>
+<col width="22%"></col>
+<col width="20%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">id</th>
+<th align="center">length</th>
+<th align="center">cfin1</th>
+<th align="center">cfin2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Min. : 0</td>
+<td align="center">Min. :19.0</td>
+<td align="center">Min. : 0.0000</td>
+<td align="center">Min. : 0.0000</td>
+</tr>
+<tr class="even">
+<td align="center">1st Qu.:13145</td>
+<td align="center">1st Qu.:24.0</td>
+<td align="center">1st Qu.: 0.0000</td>
+<td align="center">1st Qu.: 0.2778</td>
+</tr>
+<tr class="odd">
+<td align="center">Median :26291</td>
+<td align="center">Median :25.5</td>
+<td align="center">Median : 0.1111</td>
+<td align="center">Median : 0.7012</td>
+</tr>
+<tr class="even">
+<td align="center">Mean :26291</td>
+<td align="center">Mean :25.3</td>
+<td align="center">Mean : 0.4458</td>
+<td align="center">Mean : 2.0248</td>
+</tr>
+<tr class="odd">
+<td align="center">3rd Qu.:39436</td>
+<td align="center">3rd Qu.:26.5</td>
+<td align="center">3rd Qu.: 0.3333</td>
+<td align="center">3rd Qu.: 1.7936</td>
+</tr>
+<tr class="even">
+<td align="center">Max. :52581</td>
+<td align="center">Max. :32.5</td>
+<td align="center">Max. :37.6667</td>
+<td align="center">Max. :19.3958</td>
+</tr>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA’s :1581</td>
+<td align="center">NA’s :1536</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="23%"></col>
+<col width="23%"></col>
+<col width="26%"></col>
+<col width="26%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">chel1</th>
+<th align="center">chel2</th>
+<th align="center">lcop1</th>
+<th align="center">lcop2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Min. : 0.000</td>
+<td align="center">Min. : 5.238</td>
+<td align="center">Min. : 0.3074</td>
+<td align="center">Min. : 7.849</td>
+</tr>
+<tr class="even">
+<td align="center">1st Qu.: 2.469</td>
+<td align="center">1st Qu.:13.427</td>
+<td align="center">1st Qu.: 2.5479</td>
+<td align="center">1st Qu.:17.808</td>
+</tr>
+<tr class="odd">
+<td align="center">Median : 5.750</td>
+<td align="center">Median :21.673</td>
+<td align="center">Median : 7.0000</td>
+<td align="center">Median :24.859</td>
+</tr>
+<tr class="even">
+<td align="center">Mean :10.006</td>
+<td align="center">Mean :21.221</td>
+<td align="center">Mean : 12.8108</td>
+<td align="center">Mean :28.419</td>
+</tr>
+<tr class="odd">
+<td align="center">3rd Qu.:11.500</td>
+<td align="center">3rd Qu.:27.193</td>
+<td align="center">3rd Qu.: 21.2315</td>
+<td align="center">3rd Qu.:37.232</td>
+</tr>
+<tr class="even">
+<td align="center">Max. :75.000</td>
+<td align="center">Max. :57.706</td>
+<td align="center">Max. :115.5833</td>
+<td align="center">Max. :68.736</td>
+</tr>
+<tr class="odd">
+<td align="center">NA’s :1555</td>
+<td align="center">NA’s :1556</td>
+<td align="center">NA’s :1653</td>
+<td align="center">NA’s :1591</td>
+</tr>
+</tbody>
+</table>
+<table style="width:99%;">
+<caption>Table continues below</caption>
+<colgroup>
+<col width="23%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">fbar</th>
+<th align="center">recr</th>
+<th align="center">cumf</th>
+<th align="center">totaln</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Min. :0.0680</td>
+<td align="center">Min. : 140515</td>
+<td align="center">Min. :0.06833</td>
+<td align="center">Min. : 144137</td>
+</tr>
+<tr class="even">
+<td align="center">1st Qu.:0.2270</td>
+<td align="center">1st Qu.: 360061</td>
+<td align="center">1st Qu.:0.14809</td>
+<td align="center">1st Qu.: 306068</td>
+</tr>
+<tr class="odd">
+<td align="center">Median :0.3320</td>
+<td align="center">Median : 421391</td>
+<td align="center">Median :0.23191</td>
+<td align="center">Median : 539558</td>
+</tr>
+<tr class="even">
+<td align="center">Mean :0.3304</td>
+<td align="center">Mean : 520367</td>
+<td align="center">Mean :0.22981</td>
+<td align="center">Mean : 514973</td>
+</tr>
+<tr class="odd">
+<td align="center">3rd Qu.:0.4560</td>
+<td align="center">3rd Qu.: 724151</td>
+<td align="center">3rd Qu.:0.29803</td>
+<td align="center">3rd Qu.: 730351</td>
+</tr>
+<tr class="even">
+<td align="center">Max. :0.8490</td>
+<td align="center">Max. :1565890</td>
+<td align="center">Max. :0.39801</td>
+<td align="center">Max. :1015595</td>
+</tr>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+<table style="width:94%;">
+<colgroup>
+<col width="22%"></col>
+<col width="22%"></col>
+<col width="23%"></col>
+<col width="26%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">sst</th>
+<th align="center">sal</th>
+<th align="center">xmonth</th>
+<th align="center">nao</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Min. :12.77</td>
+<td align="center">Min. :35.40</td>
+<td align="center">Min. : 1.000</td>
+<td align="center">Min. :-4.89000</td>
+</tr>
+<tr class="even">
+<td align="center">1st Qu.:13.60</td>
+<td align="center">1st Qu.:35.51</td>
+<td align="center">1st Qu.: 5.000</td>
+<td align="center">1st Qu.:-1.89000</td>
+</tr>
+<tr class="odd">
+<td align="center">Median :13.86</td>
+<td align="center">Median :35.51</td>
+<td align="center">Median : 8.000</td>
+<td align="center">Median : 0.20000</td>
+</tr>
+<tr class="even">
+<td align="center">Mean :13.87</td>
+<td align="center">Mean :35.51</td>
+<td align="center">Mean : 7.258</td>
+<td align="center">Mean :-0.09236</td>
+</tr>
+<tr class="odd">
+<td align="center">3rd Qu.:14.16</td>
+<td align="center">3rd Qu.:35.52</td>
+<td align="center">3rd Qu.: 9.000</td>
+<td align="center">3rd Qu.: 1.63000</td>
+</tr>
+<tr class="even">
+<td align="center">Max. :14.73</td>
+<td align="center">Max. :35.61</td>
+<td align="center">Max. :12.000</td>
+<td align="center">Max. : 5.08000</td>
+</tr>
+<tr class="odd">
+<td align="center">NA’s :1584</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 

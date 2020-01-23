@@ -12,21 +12,97 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Summary of genesis data setsta 
+## Description of problem
 
 Over the past years, there has been a gradual decrease in the size of ocean herring caught in Europe. Measurements of herring and their living conditions from the last 60 years were collected for the analysis. Data were obtained from commercial catches of vessels. Within the catch of one unit, 50 to 100 herrings of three-year-old herring were randomly selected.
 
-```{r hearings}
-data <- read.csv("http://www.cs.put.poznan.pl/dbrzezinski/teaching/sphd/sledzie.csv")
+## Conclusion
+
+TODO
+
+## Reference libraries
+
+```{r libraries, message=FALSE}
+
+library(dplyr)
+library(knitr)
+library(pander)
+library(tidyverse)
 
 ```
 
-## Including Plots
+## Load and present data
 
-You can also embed plots, for example:
+The data in the form of a csv file was loaded directly from the task description page
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r load, cache=TRUE}
+
+download.file(
+  "http://www.cs.put.poznan.pl/dbrzezinski/teaching/sphd/sledzie.csv",
+  destfile = 'sledzie.csv'
+)
+
+data <- read.csv("sledzie.csv", header = TRUE, sep = ",", na.strings = "?") %>% rename(id = X)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r stats,include=FALSE, cache=TRUE}
+
+colNamesConcatenated <- paste(colnames(data), sep=", ")
+colCount <- ncol(data)
+rowCount <- nrow(data)
+noBlankRowsCount <- nrow(na.omit(data))
+
+```
+
+The set contains `r colCount` columns and `r rowCount` rows. Number of rows with no blank is `r noBlankRowsCount`. The columns have the following names: `r colNamesConcatenated`. First 10 rows of data:
+
+```{r kable}
+
+knitr::kable(head(data, 10))
+
+```
+
+Column description according to the content of the task:
+
+Name| Description
+---------|--------------------------------------------
+length: | length of herring caught [cm]
+cfin1:  | plankton availability [density Calanus finmarchicus type 1]
+cfin2:  | plankton availability [density Calanus finmarchicus type 2]
+chel1:  | plankton availability [density Calanus helgolandicus type 1]
+chel2:  | plankton availability [density Calanus helgolandicus type 2]
+lcop1:  | plankton availability [forkhead density type 1]
+lcop2:  | plankton availability [forkhead density type 2]
+fbar:   | fishing volume in the region [fraction of fry left]
+recr:   | annual fry [number of herrings]
+cumf:   | total annual fishing intensity in the region [fraction of fry left]
+totaln: | total number of fish caught in the fishery [number of herrings]
+sst:    | temperature at the water surface  [°C]
+sal:    | water salinity [Knudsen ppt]
+xmonth: | fishing month [month number]
+nao:    | North Atlantic Oscillation [mb]
+
+The rows in the set are ordered chronologically.
+
+## Data description
+
+In the previous step, the following column types were calculated:
+
+```{r description}
+
+glimpse(data)
+
+```
+
+## Summary
+
+Summaries of the model
+
+```{r summary}
+
+pander(summary(data))
+
+```

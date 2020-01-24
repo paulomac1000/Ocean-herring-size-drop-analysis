@@ -48,16 +48,15 @@ data <- read.csv("sledzie.csv", header = TRUE, sep = ",", na.strings = "?") %>% 
 
 
 
-```{r stats,include=FALSE, cache=TRUE}
+```{r stats, include=FALSE}
 
 colNamesConcatenated <- paste(colnames(data), sep=", ")
 colCount <- ncol(data)
 rowCount <- nrow(data)
-noBlankRowsCount <- nrow(na.omit(data))
 
 ```
 
-Zbiór zawiera `r colCount` kolumn i `r rowCount` wierszy. Liczba wierszy bez wartości pustych wynosi `r noBlankRowsCount`. Kolumny mają następujące nazwy: `r colNamesConcatenated`. Prezentacja pierwszych 10 wierszy:
+Zbiór zawiera `r colCount` kolumn i `r rowCount` wierszy. Kolumny mają następujące nazwy: `r colNamesConcatenated`. Prezentacja pierwszych 10 wierszy:
 
 ```{r kable}
 
@@ -104,3 +103,72 @@ glimpse(data)
 pander(summary(data))
 
 ```
+## Brakujące dane
+
+```{r missing_data, include=FALSE}
+
+completeRowsVector <- complete.cases(data)
+completeRows <- data[completeRowsVector, ]
+completeRowsCount <- nrow(completeRows)
+allRowsCount <- nrow(data)
+percentOfCompleteRows <- round(completeRowsCount/allRowsCount * 100, 2)
+percentOfIncompleteRows <- 100.0 - percentOfCompleteRows
+
+```
+
+Zbiór zawiera `r completeRowsCount` kompletnych wierszy ze `r allRowsCount` wszystkich, co stanowi `r percentOfCompleteRows`%. Więc `r percentOfIncompleteRows`% to dane niekompletne, co stanowi dość dużą wartość. Uzupełnione zostaną średnią wartością danej kolumny zbioru.
+
+``` {r repleace_missing_data}
+
+for(i in 1:ncol(data)){
+  data[is.na(data[,i]), i] <- mean(data[,i], na.rm = TRUE)
+}
+
+```
+
+```{r missing_data_after_repleacing, include=FALSE}
+
+completeRowsVector <- complete.cases(data)
+completeRows <- data[completeRowsVector, ]
+completeRowsCount <- nrow(completeRows)
+allRowsCount <- nrow(data)
+percentOfCompleteRows <- round(completeRowsCount/allRowsCount * 100, 2)
+
+```
+
+Zbiór zawiera teraz `r percentOfCompleteRows`% kompletnych wierszy.
+
+## Analiza ekstremalnych wartości
+
+Analizie zostanie poddany każdy parametr zbioru (poza id). Do tego celu zostanie użyta implementacja wykresu pudełkowego (ang. boxplot). Procent danych odstających dla każdej kolumny zostanie zaprezentwany na wykresie.
+
+```{r show_boxplots, include=FALSE}
+
+allCount = length(data)
+
+allOut <- vector(mode = "list")
+
+allOut['length'] = round(length(boxplot(data$length, plot=FALSE)$out) / allCount * 100, 2)
+allOut['cfin1'] = round(length(boxplot(data$cfin1, plot=FALSE)$out) / allCount * 100, 2)
+allOut['cfin2'] = round(length(boxplot(data$cfin2, plot=FALSE)$out) / allCount * 100, 2)
+allOut['chel1'] = round(length(boxplot(data$chel1, plot=FALSE)$out) / allCount * 100, 2)
+allOut['chel2'] = round(length(boxplot(data$chel2, plot=FALSE)$out) / allCount * 100, 2)
+allOut['chel2'] = round(length(boxplot(data$chel2, plot=FALSE)$out) / allCount * 100, 2)
+allOut['lcop2'] = round(length(boxplot(data$lcop2, plot=FALSE)$out) / allCount * 100, 2)
+allOut['fbar'] = round(length(boxplot(data$fbar, plot=FALSE)$out) / allCount * 100, 2)
+allOut['recr'] = round(length(boxplot(data$recr, plot=FALSE)$out) / allCount * 100, 2)
+allOut['cumf'] = round(length(boxplot(data$cumf, plot=FALSE)$out) / allCount * 100, 2)
+allOut['totaln'] = round(length(boxplot(data$totaln, plot=FALSE)$out) / allCount * 100, 2)
+allOut['sst'] = round(length(boxplot(data$sst, plot=FALSE)$out) / allCount * 100, 2)
+allOut['sal'] = round(length(boxplot(data$sal, plot=FALSE)$out) / allCount * 100, 2)
+allOut['xmonth'] = round(length(boxplot(data$xmonth, plot=FALSE)$out) / allCount * 100, 2)
+allOut['nao'] = round(length(boxplot(data$nao, plot=FALSE)$out) / allCount * 100, 2)
+
+```
+
+```{r}
+
+barplot(unlist(allOut), las=2, cex.names=.5)
+
+```
+Na podstawie wykresów obrazujących rozkład wartości można wnioskować że dla atrybutów sal oraz cfin1 występują wartości odstające.

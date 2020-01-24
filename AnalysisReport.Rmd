@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: true
-    toc_float: true
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
@@ -33,6 +33,7 @@ library(tidyverse)
 library(gridExtra)
 library(imputeTS)
 library(corrplot)
+library(plotly)
 
 ```
 
@@ -434,3 +435,18 @@ grid.arrange(p_lcop1_chel1 , p_lcop2_chel2, p_cumf_fbar, p_totaln_cumf, ncol = 2
 ```
 
 Potwierdzono w ten sposób wysoka korelację pomiędzy tymi parami.
+
+### Zmiana w czasie
+
+```{r}
+
+data_sample <- sample_n(data, 500)
+q <- ggplot(data_sample, aes(id, length)) + 
+  geom_jitter() + 
+  geom_smooth(se = FALSE, color="green") + 
+  geom_vline(xintercept = 17000, colour="darkgray", linetype = "longdash", size=1) + 
+  ggtitle('Zmiana długości złowionego śledzia') +
+  theme_bw()
+ggplotly(q)
+
+```

@@ -1,7 +1,7 @@
 ---
 title: "Analiza spadku wielkości śledzia oceanicznego"
 author: "Paweł Maciejewski"
-date: "23 01 2020"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: true
@@ -20,7 +20,9 @@ Na przestrzeni ostatnich lat zauważono stopniowy spadek rozmiaru śledzia ocean
 
 TODO
 
-## Biblioteki
+## Wstęp
+
+### Biblioteki
 
 ```{r libraries, message=FALSE}
 
@@ -28,10 +30,23 @@ library(dplyr)
 library(knitr)
 library(pander)
 library(tidyverse)
+library(gridExtra)
+library(imputeTS)
+library(corrplot)
 
 ```
 
-## Ładowanie i prezentacja danych
+### Powtarzalność eksperymentów
+
+W celu zapewnienia powtarzalności wyników dla uruchamianego wielokrotnie ustawiono ziarno (ang. seed) na wartość 13.
+
+```{r seed}
+
+set.seed(13)
+
+```
+
+### Ładowanie i prezentacja danych
 
 Dane zostana załadowane bezpośrednio z pliku csv pochodzącego ze strony z zadaniem.
 
@@ -64,7 +79,9 @@ kable(head(data, 10))
 
 ```
 
-Opis kolumn:
+## Opis danych
+
+### Opis kolumn:
 
 Nazwa | Opis
 ---------|--------------------------------------------
@@ -86,7 +103,7 @@ nao:    | oscylacja północnoatlantycka [mb]
 
 Wiersze w zbiorze są uporządkowane chronologicznie.
 
-## Opis danych
+### Typy danych
 
 Prezentacja typów kolumn:
 
@@ -96,16 +113,255 @@ glimpse(data)
 
 ```
 
-## Podsumowanie rozkładów
+### Podsumowanie rozkładów
 
 ```{r summary}
 
 pander(summary(data))
 
 ```
-## Brakujące dane
 
-```{r missing_data, include=FALSE}
+## Oczyszczanie danych
+
+### Wyświetlenie odstających
+
+```{r show_boxplots, include=FALSE}
+
+allOut <- vector(mode = "list")
+
+allOut['length'] =  round(length(boxplot(data$length, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['cfin1'] =   round(length(boxplot(data$cfin1, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['cfin2'] =   round(length(boxplot(data$cfin2, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['chel1'] =   round(length(boxplot(data$chel1, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['chel2'] =   round(length(boxplot(data$chel2, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['lcop1'] =   round(length(boxplot(data$lcop1, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['lcop2'] =   round(length(boxplot(data$lcop2, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['fbar'] =    round(length(boxplot(data$fbar, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['recr'] =    round(length(boxplot(data$recr, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['cumf'] =    round(length(boxplot(data$cumf, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['totaln'] =  round(length(boxplot(data$totaln, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['sst'] =     round(length(boxplot(data$sst, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['sal'] =     round(length(boxplot(data$sal, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['xmonth'] =  round(length(boxplot(data$xmonth, plot=FALSE)$out) / rowCount * 100, 2)
+allOut['nao'] =     round(length(boxplot(data$nao, plot=FALSE)$out) / rowCount * 100, 2)
+```
+
+```{r}
+
+barplot(unlist(allOut), main="Procent wartości odstajacych", horiz=TRUE, las=2, cex.names=0.7)
+
+```
+
+Na podstawie wykresów obrazujących rozkład wartości można wnioskować że dla atrybutów sal oraz cfin1 występują wartości odstające. Należy te wartości dokładniej zwyryfikować na graficznych wykresach rozkładów wartości.
+
+### Oczyszczanie z odstajacych
+
+Na każdym z wykresów przedstawiono rozkład wartości każdego kolejnego atrybutu ze zbioru. W przypadku wystąpienia wartości wyraźnie skrajnych, będą one zastepowane brakiem wartości (N/A).
+
+#### Długość śledzia
+
+```{r }
+
+p_length <- ggplot(data, aes(length)) +
+     geom_histogram(binwidth = 0.5) +  
+     scale_x_discrete(name="Długość [cm]", limits= seq(min(data$length), max(data$length), by=1) ) +
+     ylab("Liczba wystąpień") +
+     ggtitle("Długość śledzia") + 
+     theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r p_length, echo=FALSE}
+
+plot(p_length)
+
+```
+
+Komentarz: rozkład zbliżony do normalnego. Nie ma potrzeby zmian.
+
+#### Zagęszczenie planktonu
+
+```{r p_cfin}
+
+p_cfin1 <- ggplot(data, aes(cfin1)) +
+  geom_histogram(binwidth = 1.0) + 
+  xlab("Zagęszczenie planktonu") +
+  ylab("Liczba wystąpień") + ggtitle("Calanus finmarchicus gat. 1") + 
+  theme(plot.title = element_text(hjust = 0.5))
+p_cfin2 <- ggplot(data, aes(cfin2)) +
+  geom_histogram(binwidth = 1.0) +
+  xlab("Zagęszczenie planktonu") +  
+  ylab("Liczba wystąpień") + 
+  ggtitle("Calanus finmarchicus gat. 2") +
+  theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(p_cfin1, p_cfin2, ncol = 2, nrow = 1)
+
+```
+
+Komentarz: rozklady zbliżone do prawostronnie skośnego. Dla Calanus finmarchicus gat. 1 warto usunąć wartości odstające, które prawdopodobnie sa błędnie zebranymi danymi. Poniżej prezentacja porpawionego rozkładu.
+
+```{r p_cfin_repleace}
+
+cfin1ToRepleace <- which(data$cfin1 > 20)
+for (i in cfin1ToRepleace){
+  data[i, "cfin1"] <- NA
+}
+data$cfin1 <- na.interpolation(data$cfin1)
+
+```
+
+```{r p_cfin_updated}
+
+p_cfin1 <- ggplot(data, aes(cfin1)) +
+  geom_histogram(binwidth = 1.0) + 
+  xlab("Zagęszczenie planktonu") +
+  ylab("Liczba wystąpień") + ggtitle("Poprawione: Calanus finmarchicus gat. 1") + 
+  theme(plot.title = element_text(hjust = 0.5))
+plot(p_cfin1)
+
+```
+
+
+```{r p_chel}
+
+p_chel1 <- ggplot(data, aes(chel1)) +
+  geom_histogram(binwidth = 1.0) + 
+  xlab("Zagęszczenie planktonu") +
+  ylab("Liczba wystąpień") +
+  ggtitle("Calanus helgolandicus gat. 1") +
+  theme(plot.title = element_text(hjust = 0.5))
+p_chel2 <- ggplot(data, aes(chel2)) +
+  geom_histogram(binwidth = 1.0) +
+  xlab("Zagęszczenie planktonu") +  
+  ylab("Liczba wystąpień") + 
+  ggtitle("Calanus helgolandicus gat. 2") + 
+  theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(p_chel1, p_chel2, ncol = 2, nrow = 1)
+
+```
+
+Komentarz: rozklady zbliżone do prawostronnie skośnego. Nie ma potrzeby zmian.
+
+```{r p_lcop}
+
+p_lcop1 <- ggplot(data, aes(x=lcop1)) +
+  geom_histogram(binwidth = 1.0) +
+  xlab("Zagęszczenie planktonu") +
+  ylab("Liczba wystąpień") + 
+  ggtitle("Widłonogi gat. 1") +
+  theme(plot.title = element_text(hjust = 0.5))
+p_lcop2 <- ggplot(data, aes(x=lcop2)) + 
+  geom_histogram(binwidth = 1.0) +  
+  xlab("Zagęszczenie planktonu") +  
+  ylab("Liczba wystąpień") + 
+  ggtitle("Widłonogi gat. 2") + 
+  theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(p_lcop1, p_lcop2, ncol = 2, nrow = 1)
+
+```
+
+Komentarz: rozklady zbliżone do prawostronnie skośnego. Dla Widłonogów gat. 1 warto usunąć wartości odstające, które prawdopodobnie sa błędnie zebranymi danymi. Poniżej prezentacja porpawionego rozkładu.
+
+```{r p_lcop1_repleace}
+
+lcop1ToRepleace <- which(data$cfin1 > 90)
+for (j in lcop1ToRepleace){
+  data[i, "lcop1"] <- NA
+}
+data$lcop1 <- na.interpolation(data$lcop1)
+
+```
+
+```{r p_lcop1_updated}
+
+p_lcop1 <- ggplot(data, aes(x=lcop1)) +
+  geom_histogram(binwidth = 1.0) +
+  xlab("Zagęszczenie planktonu") +
+  ylab("Liczba wystąpień") + 
+  ggtitle("Widłonogi gat. 1") +
+  theme(plot.title = element_text(hjust = 0.5))
+plot(p_lcop1)
+
+```
+
+#### Dane dotyczące liczby śledzi
+
+```{r p_fbar_cumf}
+
+p_fbar <- ggplot(data, aes(fbar)) +
+  geom_histogram(binwidth = 0.05) +
+  xlab("Ułamek pozostawionego narybku") +
+  ylab("Liczba wystąpień") +
+  ggtitle("Natężenie połowów w regionie") +
+  theme(plot.title = element_text(hjust = 0.5))
+p_cumf <- ggplot(data, aes(cumf)) + geom_histogram(binwidth = 0.02) +
+  xlab("Ułamek pozostawionego narybku")+
+  ylab("Liczba wystąpień") + ggtitle("Łączne roczne natężenie połowów") +
+  theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(p_fbar, p_cumf, ncol = 2, nrow = 1)
+
+```
+
+Komentarz: Natężenia połowów mają rozmiat wielomodalny. Nie ma potrzeby zmian.
+
+```{r p_recr_totaln}
+
+p_recr <- ggplot(data, aes(recr)) +
+  geom_histogram(binwidth = 50000.0) +
+  xlab("Liczba śledzi")+
+  ylab("Liczba wystąpień") + ggtitle("Roczny narybek") +
+  theme(plot.title = element_text(hjust = 0.5))
+p_totaln <- ggplot(data, aes(totaln)) + geom_histogram(binwidth = 50000.0) + 
+  xlab("Liczba śledzi")+
+  ylab("Liczba wystąpień") + ggtitle("Łączna liczba złowionych ryb") +
+  theme(plot.title = element_text(hjust = 0.5))
+grid.arrange(p_recr, p_cumf, ncol = 2, nrow = 1)
+
+```
+
+Komentarz: Dane liczby śledzi maja rozklad bardziej równomierny niż dane dotyczące zagęszczenia planktonu. Nie ma potrzeby zmian.
+
+#### Warunki przyrodnicze
+
+```{r p_sst_sal_xmonth_nao}
+
+p_sst <- ggplot(data, aes(sst)) +
+  geom_histogram(binwidth = 0.1) + 
+  xlab("Temperatura [°C]") + 
+  ylab("Liczba wystąpień") + 
+  ggtitle("Temperatura przy powierzchni wody") +
+  theme(plot.title = element_text(hjust=0.5))
+p_sal <- ggplot(data, aes(sal)) + 
+  geom_histogram(binwidth = 0.01) + 
+  xlab("Poziom zasolenia [Knudsen ppt]") + 
+  ylab("Liczba wystąpień") +
+  ggtitle("Zasolenie wody") + 
+  theme(plot.title=element_text(hjust=0.5))
+p_xmonth <- ggplot(data, aes(xmonth)) +
+  geom_histogram(binwidth = 1.0) +
+  xlab("Numer miesiąca") +
+  ylab("Liczba wystąpień") + 
+  ggtitle("Miesiąc połowu") + 
+  theme(plot.title=element_text(hjust=0.5))
+p_nao <- ggplot(data, aes(nao)) +
+  geom_histogram(binwidth = 0.2) +
+  xlab("Oscylacja [mb]") + 
+  ylab("Liczba wystąpień") +
+  ggtitle("Oscylacja północnoatlantycka") +
+  theme(plot.title=element_text(hjust=0.5))
+grid.arrange(p_sst, p_sal, p_xmonth, p_nao, ncol = 2, nrow = 2)
+
+```
+
+Komentarz: 
+- Najczęściej odnotowaną temperaturą wody było 13.6° oraz głównie temperatury wyższe, zapewne przez główne zbieranie danych w okresie letnim.
+- Zasolenie wody koncentruje się głównie w przedziale 35.5 - 35.55 oraz zawiera dużo wartości skrajnych, prawdopodobnie z powodu dopływu rzek
+
+Wniosek: Zbiór ma dużo wartości odstających, ale grafiki rozkładów wyraźnie wskazują, że ich usunięcie jest zbyt ryzykowne i nie ma ku temu wskazań. Zostały więc usunięte prawie nic nie znaczące, drobne odstępstwa, wyraźnie wskazujące na błędy pomiarowe.
+
+### Oczyszczenie braków 
+
+```{r missing_data}
 
 completeRowsVector <- complete.cases(data)
 completeRows <- data[completeRowsVector, ]
@@ -126,7 +382,7 @@ for(i in 1:ncol(data)){
 
 ```
 
-```{r missing_data_after_repleacing, include=FALSE}
+```{r missing_data_after_repleacing}
 
 completeRowsVector <- complete.cases(data)
 completeRows <- data[completeRowsVector, ]
@@ -138,37 +394,43 @@ percentOfCompleteRows <- round(completeRowsCount/allRowsCount * 100, 2)
 
 Zbiór zawiera teraz `r percentOfCompleteRows`% kompletnych wierszy.
 
-## Analiza ekstremalnych wartości
+## Analiza
 
-Analizie zostanie poddany każdy parametr zbioru (poza id). Do tego celu zostanie użyta implementacja wykresu pudełkowego (ang. boxplot). Procent danych odstających dla każdej kolumny zostanie zaprezentwany na wykresie.
+### Macierz korelacji
 
-```{r show_boxplots, include=FALSE}
+Poniżej przedstawiono macierz korelacji.
 
-allCount = length(data)
+```{r cor}
 
-allOut <- vector(mode = "list")
-
-allOut['length'] = round(length(boxplot(data$length, plot=FALSE)$out) / allCount * 100, 2)
-allOut['cfin1'] = round(length(boxplot(data$cfin1, plot=FALSE)$out) / allCount * 100, 2)
-allOut['cfin2'] = round(length(boxplot(data$cfin2, plot=FALSE)$out) / allCount * 100, 2)
-allOut['chel1'] = round(length(boxplot(data$chel1, plot=FALSE)$out) / allCount * 100, 2)
-allOut['chel2'] = round(length(boxplot(data$chel2, plot=FALSE)$out) / allCount * 100, 2)
-allOut['chel2'] = round(length(boxplot(data$chel2, plot=FALSE)$out) / allCount * 100, 2)
-allOut['lcop2'] = round(length(boxplot(data$lcop2, plot=FALSE)$out) / allCount * 100, 2)
-allOut['fbar'] = round(length(boxplot(data$fbar, plot=FALSE)$out) / allCount * 100, 2)
-allOut['recr'] = round(length(boxplot(data$recr, plot=FALSE)$out) / allCount * 100, 2)
-allOut['cumf'] = round(length(boxplot(data$cumf, plot=FALSE)$out) / allCount * 100, 2)
-allOut['totaln'] = round(length(boxplot(data$totaln, plot=FALSE)$out) / allCount * 100, 2)
-allOut['sst'] = round(length(boxplot(data$sst, plot=FALSE)$out) / allCount * 100, 2)
-allOut['sal'] = round(length(boxplot(data$sal, plot=FALSE)$out) / allCount * 100, 2)
-allOut['xmonth'] = round(length(boxplot(data$xmonth, plot=FALSE)$out) / allCount * 100, 2)
-allOut['nao'] = round(length(boxplot(data$nao, plot=FALSE)$out) / allCount * 100, 2)
+corrplot(cor(data), tl.col="black")
 
 ```
 
-```{r}
+Komentarz: żaden z atrybutów nie wykazuje wysokiego współczynnika korelacji w stosunku do atrybutu decyzyjnego length. Najwyższa pozytywna korelacja występuje dla następujących par:
+- 'zagęszczenie widłonogów gat. 1 (lcop1)' oraz 'zagęszczenie Calanus helgolandicus gat. 1 (chel1)',
+- 'zagęszczenie widłonogów gat. 2 (lcop2)' oraz 'zagęszczenie Calanus helgolandicus gat. 2 (chel2) '
+- 'łączne roczne natężenie połowów w regionie (cumf)' oraz 'natężenie połowów w regionie (fbar)'.
+Najwyższa negatywna korelacja występuje dla pary 'łączna liczba ryb złowionych w ramach połowu (totaln)' oraz 'łączne roczne natężenie połowów w regionie (cumf)'.
 
-barplot(unlist(allOut), las=2, cex.names=.5)
+Szczegółowa prezentacja korelacji 
+
+```{r p_cor_detailed}
+
+p_lcop1_chel1 <- ggplot(data, aes(x=lcop1, y=chel1)) + 
+  geom_point() + geom_smooth(method=lm) + 
+  annotate("text", x = 30, y = 87.25, label = c(paste("wsp. korelacji =", round(cor(data$lcop1, data$chel1),2))))
+p_lcop2_chel2 <- ggplot(data, aes(x=lcop2, y=chel2)) + 
+  geom_point() + geom_smooth(method=lm) +
+  annotate("text", x = 25, y = 50, label = c(paste("wsp. korelacji =", round(cor(data$lcop2, data$chel2),2))))
+p_cumf_fbar   <- ggplot(data, aes(x=cumf, y=fbar)) + 
+  geom_point() + 
+  geom_smooth(method=lm) + annotate("text", x = 0.15, y = 0.7, label = c(paste("wsp. korelacji =", round(cor(data$cumf, data$fbar),2))))
+p_totaln_cumf <- ggplot(data, aes(x=totaln, y=cumf)) + 
+  geom_point() +
+  geom_smooth(method=lm) + annotate("text", x = 800000, y = 0.34,
+  label = c(paste("wsp. korelacji =", round(cor(data$totaln, data$cumf),2))))
+grid.arrange(p_lcop1_chel1 , p_lcop2_chel2, p_cumf_fbar, p_totaln_cumf, ncol = 2, nrow = 2, top="Wykresy korelacji")
 
 ```
-Na podstawie wykresów obrazujących rozkład wartości można wnioskować że dla atrybutów sal oraz cfin1 występują wartości odstające.
+
+Potwierdzono w ten sposób wysoka korelację pomiędzy tymi parami.

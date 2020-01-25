@@ -18,7 +18,7 @@ Na przestrzeni ostatnich lat zauważono stopniowy spadek rozmiaru śledzia ocean
 
 ## Wnioski
 
-TODO
+Spadek długości śledzi jest zależny głównie od zwiększonego natężenia połowów oraz temperatury przy powierzchni wody.
 
 ## Wstęp
 
@@ -26,14 +26,16 @@ TODO
 
 ```{r libraries, message=FALSE}
 
-library(dplyr)
-library(knitr)
-library(pander)
-library(tidyverse)
-library(gridExtra)
-library(imputeTS)
-library(corrplot)
-library(plotly)
+library(dplyr)         # data manipulation
+library(knitr)         # report generation
+library(pander)        # easy tool for rendering R objects into Pandoc's markdown
+library(tidyverse)     # collection of R packages designed for data science
+library(gridExtra)     # multiple plots on grid
+library(imputeTS)      # imputation (replacement) of missing values in univariate time series
+library(corrplot)      # correlation matrix visualisation
+library(plotly)        # interactive plots
+library(caret)         # data exploration lib
+library(randomForest)  # rf
 
 ```
 
@@ -61,8 +63,6 @@ download.file(
 data <- read.csv("sledzie.csv", header = TRUE, sep = ",", na.strings = "?") %>% rename(id = X)
 
 ```
-
-
 
 ```{r stats, include=FALSE}
 
@@ -101,7 +101,7 @@ sst:    | temperatura przy powierzchni wody [°C]
 sal:    | poziom zasolenia wody [Knudsen ppt]
 xmonth: | miesiąc połowu [numer miesiąca]
 nao:    | oscylacja północnoatlantycka [mb]
-
+\
 Wiersze w zbiorze są uporządkowane chronologicznie.
 
 ### Typy danych
@@ -149,11 +149,11 @@ allOut['nao'] =     round(length(boxplot(data$nao, plot=FALSE)$out) / rowCount *
 
 ```{r}
 
-barplot(unlist(allOut), main="Procent wartości odstajacych", horiz=TRUE, las=2, cex.names=0.7)
+barplot(unlist(allOut), main="Procent wartości odstajacych", horiz=TRUE, las=1, cex.names=0.7)
 
 ```
 
-Na podstawie wykresów obrazujących rozkład wartości można wnioskować że dla atrybutów sal oraz cfin1 występują wartości odstające. Należy te wartości dokładniej zwyryfikować na graficznych wykresach rozkładów wartości.
+Na podstawie wykresów obrazujących rozkład wartości można wnioskować że dla atrybutów sal oraz cfin1 występują wartości odstające. Należy te wartości dokładniej zweryfikować na graficznych wykresach rozkładów wartości.
 
 ### Oczyszczanie z odstajacych
 
@@ -199,7 +199,7 @@ grid.arrange(p_cfin1, p_cfin2, ncol = 2, nrow = 1)
 
 ```
 
-Komentarz: rozklady zbliżone do prawostronnie skośnego. Dla Calanus finmarchicus gat. 1 warto usunąć wartości odstające, które prawdopodobnie sa błędnie zebranymi danymi. Poniżej prezentacja porpawionego rozkładu.
+Komentarz: rozklady zbliżone do prawostronnie skośnego. Dla Calanus finmarchicus gat. 1 warto usunąć wartości odstające, które prawdopodobnie są błędnie zebranymi danymi. Poniżej prezentacja porpawionego rozkładu.
 
 ```{r p_cfin_repleace}
 
@@ -261,7 +261,7 @@ grid.arrange(p_lcop1, p_lcop2, ncol = 2, nrow = 1)
 
 ```
 
-Komentarz: rozklady zbliżone do prawostronnie skośnego. Dla Widłonogów gat. 1 warto usunąć wartości odstające, które prawdopodobnie sa błędnie zebranymi danymi. Poniżej prezentacja porpawionego rozkładu.
+Komentarz: rozklady zbliżone do prawostronnie skośnego. Dla Widłonogów gat. 1 warto usunąć wartości odstające, które prawdopodobnie są błędnie zebranymi danymi. Poniżej prezentacja poprawionego rozkładu.
 
 ```{r p_lcop1_repleace}
 
@@ -303,7 +303,7 @@ grid.arrange(p_fbar, p_cumf, ncol = 2, nrow = 1)
 
 ```
 
-Komentarz: Natężenia połowów mają rozmiat wielomodalny. Nie ma potrzeby zmian.
+Komentarz: Natężenia połowów mają rozkład wielomodalny. Nie ma potrzeby zmian.
 
 ```{r p_recr_totaln}
 
@@ -355,9 +355,9 @@ grid.arrange(p_sst, p_sal, p_xmonth, p_nao, ncol = 2, nrow = 2)
 ```
 
 Komentarz: 
-- Najczęściej odnotowaną temperaturą wody było 13.6° oraz głównie temperatury wyższe, zapewne przez główne zbieranie danych w okresie letnim.
-- Zasolenie wody koncentruje się głównie w przedziale 35.5 - 35.55 oraz zawiera dużo wartości skrajnych, prawdopodobnie z powodu dopływu rzek
-
+-- Najczęściej odnotowaną temperaturą wody było 13.6° oraz głównie temperatury wyższe, zapewne przez główne zbieranie danych w okresie letnim. \
+-- Zasolenie wody koncentruje się głównie w przedziale 35.5 - 35.55 oraz zawiera dużo wartości skrajnych, prawdopodobnie z powodu dopływu rzek \
+\
 Wniosek: Zbiór ma dużo wartości odstających, ale grafiki rozkładów wyraźnie wskazują, że ich usunięcie jest zbyt ryzykowne i nie ma ku temu wskazań. Zostały więc usunięte prawie nic nie znaczące, drobne odstępstwa, wyraźnie wskazujące na błędy pomiarowe.
 
 ### Oczyszczenie braków 
@@ -407,15 +407,15 @@ corrplot(cor(data), tl.col="black")
 
 ```
 
-Komentarz: żaden z atrybutów nie wykazuje wysokiego współczynnika korelacji w stosunku do atrybutu decyzyjnego length. Najwyższa pozytywna korelacja występuje dla następujących par:
-- 'zagęszczenie widłonogów gat. 1 (lcop1)' oraz 'zagęszczenie Calanus helgolandicus gat. 1 (chel1)',
-- 'zagęszczenie widłonogów gat. 2 (lcop2)' oraz 'zagęszczenie Calanus helgolandicus gat. 2 (chel2) '
-- 'łączne roczne natężenie połowów w regionie (cumf)' oraz 'natężenie połowów w regionie (fbar)'.
-Najwyższa negatywna korelacja występuje dla pary 'łączna liczba ryb złowionych w ramach połowu (totaln)' oraz 'łączne roczne natężenie połowów w regionie (cumf)'.
-
+Komentarz: żaden z atrybutów nie wykazuje wysokiego współczynnika korelacji w stosunku do atrybutu decyzyjnego length. Najwyższa pozytywna korelacja występuje dla następujących par: \
+-- 'zagęszczenie widłonogów gat. 1 (lcop1)' oraz 'zagęszczenie Calanus helgolandicus gat. 1 (chel1)', \
+-- 'zagęszczenie widłonogów gat. 2 (lcop2)' oraz 'zagęszczenie Calanus helgolandicus gat. 2 (chel2) ' \
+-- 'łączne roczne natężenie połowów w regionie (cumf)' oraz 'natężenie połowów w regionie (fbar)'.
+Najwyższa negatywna korelacja występuje dla pary 'łączna liczba ryb złowionych w ramach połowu (totaln)' oraz 'łączne roczne natężenie połowów w regionie (cumf)'. \
+ \
 Szczegółowa prezentacja korelacji 
 
-```{r p_cor_detailed}
+```{r cor_detailed}
 
 p_lcop1_chel1 <- ggplot(data, aes(x=lcop1, y=chel1)) + 
   geom_point() + geom_smooth(method=lm) + 
@@ -434,11 +434,11 @@ grid.arrange(p_lcop1_chel1 , p_lcop2_chel2, p_cumf_fbar, p_totaln_cumf, ncol = 2
 
 ```
 
-Potwierdzono w ten sposób wysoka korelację pomiędzy tymi parami.
+Potwierdzono w ten sposób wysoką korelację pomiędzy tymi parami.
 
 ### Zmiana w czasie
 
-```{r}
+```{r time_change}
 
 data_sample <- sample_n(data, 500)
 q <- ggplot(data_sample, aes(id, length)) + 
@@ -448,5 +448,97 @@ q <- ggplot(data_sample, aes(id, length)) +
   ggtitle('Zmiana długości złowionego śledzia') +
   theme_bw()
 ggplotly(q)
+
+```
+
+### Podział zbioru
+
+Podział zbioru danych na zbiór treningowy i testowy w stosunku 8:2.
+
+```{r data_split}
+
+dataPartition <- createDataPartition(y=data$length, p=.8, list=FALSE)
+trainSet <- data[dataPartition, ]
+testSet <- data[-dataPartition, ]
+trainSetPercent <- round(dim(trainSet) / nrow(data) * 100, 2)
+testSetPercent <- round(dim(testSet) / nrow(data) * 100, 2)
+
+```
+
+Zbiór uczący zawiera `r dim(trainSet)` elementów, co stanowi `r trainSetPercent`% całości. \
+Zbiór testowy zawiera `r dim(testSet)` elementów, co stanowi `r testSetPercent`% całości. \
+
+### Trenowanie
+
+Do znalezienia regresora długości śledzi wykorzystano algorytm regresji liniowej. Podczas uczenia używamy jest użyta technika walidacji krzyżowej z podziałem zbioru treningowego na 10 części.
+
+```{r training}
+
+trainingControl <- trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 10
+)
+model <- train(
+  length ~ .,
+  data = as.matrix(trainSet),
+  method = "lm",
+  na.action = na.omit,
+  trControl = trainingControl,
+  preProcess = c("scale", "center")
+)
+model
+
+```
+
+### Ocena modelu
+
+Do porównania jakości wyliczonego regresora jest użyty regresor średniej wartości śledzia na podstawie wszystkich oczyszczonych danych.
+
+```{r validate}
+
+testPred <- predict(model, testSet)
+postResample(pred = testPred, obs = testSet$length)
+postResample(pred = mean(testSet$length), obs = testSet$length)
+
+```
+
+Komentarz: wyuczony regresor jest zauważalnie lepszy (wniosek na podstawie wartości RMSE).
+
+### Ważność atrybutów
+
+Ważność cech w regresorze jest wartością wynikową obliczeń istotną z punktu widzenia analizy przyczyn spadku rozmiaru śledzia.
+
+```{r importance_of_attributes}
+
+ggplot(varImp(model)) +
+  ggtitle("Ważność cech w regresorze")
+
+```
+
+Wnioski: najbardziej znaczące atrybuty to \
+-- (fbar) natężenie połowów w regionie [ułamek pozostawionego narybku] \
+-- (cumf) łączne roczne natężenie połowów w regionie [ułamek pozostawionego narybku] \
+-- (sst) temperatura przy powierzchni wody [°C] \
+
+```{r change_attribute_in_time, message=FALSE, warning=FALSE}
+
+fbar_plot <- ggplot(data, aes_string(x="id", y="fbar")) +
+            geom_point(alpha = 0.02) +
+            geom_smooth() +
+            ggtitle(paste("Zmiana atrybutu fbar w kolejnych połowach"))
+print(fbar_plot)
+
+cumf_plot <- ggplot(data, aes_string(x="id", y="cumf")) +
+            geom_point(alpha = 0.02) +
+            geom_smooth() +
+            ggtitle(paste("Zmiana atrybutu cumf w kolejnych połowach"))
+print(cumf_plot)
+
+sst_plot <- ggplot(data, aes_string(x="id", y="sst")) +
+            geom_point(alpha = 0.02) +
+            geom_smooth() +
+            ggtitle(paste("Zmiana atrybutu sst w kolejnych połowach"))
+print(sst_plot)
 
 ```

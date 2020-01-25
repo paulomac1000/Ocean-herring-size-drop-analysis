@@ -34,7 +34,6 @@ library(imputeTS)      # imputation (replacement) of missing values in univariat
 library(corrplot)      # correlation matrix visualisation
 library(plotly)        # interactive plots
 library(caret)         # data exploration lib
-library(randomForest)  # rf
 
 ```
 
